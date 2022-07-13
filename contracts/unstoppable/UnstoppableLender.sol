@@ -27,6 +27,8 @@ contract UnstoppableLender is ReentrancyGuard {
         require(amount > 0, "Must deposit at least one token");
         // Transfer token from sender. Sender must have first approved them.
         damnValuableToken.transferFrom(msg.sender, address(this), amount);
+
+        // Smart contract assume token balance only can deposited by this function
         poolBalance = poolBalance + amount;
     }
 
@@ -37,6 +39,7 @@ contract UnstoppableLender is ReentrancyGuard {
         require(balanceBefore >= borrowAmount, "Not enough tokens in pool");
 
         // Ensured by the protocol via the `depositTokens` function
+        // Assert should use >= instead of == in order to mitigate conventional ERC20 token transfer
         assert(poolBalance == balanceBefore);
         
         damnValuableToken.transfer(msg.sender, borrowAmount);
